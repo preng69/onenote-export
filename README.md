@@ -1,4 +1,4 @@
-# OneNote Export
+# OneNote Export to HTML or .enex
 
 Export Microsoft OneNote notebooks into local `.html` files, or into a single Evernote `.enex` file that Apple Notes imports with inline images and attachments preserved.
 
@@ -7,6 +7,12 @@ The exporter uses:
 - `msal` for browser-based Microsoft sign-in
 - `requests` for Microsoft Graph calls
 - `beautifulsoup4` and `lxml` to flatten OneNote page HTML into a Notes-friendly form
+
+Why? I had a lot of notes in OneNote in a non-personal tenant, wanted to move them to Apple Notes.
+
+Observation from OneNote -> Notes migration:
+* Going through HTML preserves notebook/folder/section structure but not inline attachments, images become broken file links.
+* Going through `.enex` flattens structure but preserves inline attachments. I had only 3 sections so ended up using `.enex`, exporting and importing one section at a time. With a lot of sections it would be faster to update the code to handle structure with `.enex`.
 
 ## What It Exports
 
