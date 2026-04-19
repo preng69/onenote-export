@@ -1,0 +1,109 @@
+Metadata-Version: 2.4
+Name: onenote-export
+Version: 0.1.0
+Summary: Export OneNote notebooks into Apple Notes-importable HTML files.
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: msal>=1.36.0
+Requires-Dist: requests>=2.33.0
+Requires-Dist: beautifulsoup4>=4.14.0
+Requires-Dist: lxml>=6.0.0
+
+# OneNote Export
+
+Export Microsoft OneNote notebooks into local `.html` files that Apple Notes can import.
+
+The exporter uses:
+
+- `msal` for browser-based Microsoft sign-in
+- `requests` for Microsoft Graph calls
+- `beautifulsoup4` and `lxml` to flatten OneNote page HTML into a Notes-friendly form
+
+## What It Exports
+
+- notebooks, section groups, sections, and pages through Microsoft Graph
+- one `.html` file per OneNote page
+- inline images embedded as `data:` URLs so they survive Apple Notes import
+- file attachments downloaded next to the exported note in a sibling `.assets/` directory
+- a `manifest.json` with source metadata and output paths
+
+## Current Limits
+
+- page layouts are linearized; exact OneNote freeform positioning is not preserved
+- non-image attachments are exported beside the note, not embedded into Apple Notes as native attachments
+- handwritten ink and some OneNote-only embeds are reduced to text or links
+
+## Prerequisites
+
+1. Create a Microsoft Entra app registration for a public client.
+2. Supported account types:
+   - choose the account type that matches your OneNote account
+   - use "Accounts in any organizational directory and personal Microsoft accounts" if you want both
+3. Under `Authentication`, add a `Mobile and desktop applications` redirect URI:
+   - `http://localhost`
+4. Under `API permissions`, add Microsoft Graph delegated permission:
+   - `Notes.Read`
+
+No client secret is required.
+
+## Setup
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install -e .
+```
+
+## Usage
+
+Sign in with the browser flow and save your client ID:
+
+```bash
+.venv/bin/onenote-export auth login --client-id YOUR_APP_CLIENT_ID
+```
+
+List notebooks:
+
+```bash
+.venv/bin/onenote-export list notebooks
+```
+
+Export everything:
+
+```bash
+.venv/bin/onenote-export export --output ./export
+```
+
+Export one notebook by name or ID:
+
+```bash
+.venv/bin/onenote-export export --output ./export --notebook "Personal"
+```
+
+After export, import the generated `export/notes` folder into Apple Notes.
+
+## Commands
+
+```bash
+.venv/bin/onenote-export auth login --client-id ...
+.venv/bin/onenote-export auth status
+.venv/bin/onenote-export auth logout
+.venv/bin/onenote-export list notebooks
+.venv/bin/onenote-export list sections
+.venv/bin/onenote-export list pages --notebook "Notebook Name"
+.venv/bin/onenote-export export --output ./export
+```
+
+## Local State
+
+Config and auth cache are stored under:
+
+- `~/.config/onenote-export/config.json`
+- `~/.config/onenote-export/token_cache.bin`
+- `~/.config/onenote-export/auth_state.json`
+
+## Testing
+
+```bash
+.venv/bin/python -m unittest discover -s tests
+```
+

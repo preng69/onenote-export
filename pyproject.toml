@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "onenote-export"
+version = "0.1.0"
+description = "Export OneNote notebooks to HTML or Evernote ENEX for Apple Notes and other tools."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "msal>=1.36.0",
+  "requests>=2.33.0",
+  "beautifulsoup4>=4.14.0",
+  "lxml>=6.0.0",
+]
+
+[project.scripts]
+onenote-export = "onenote_export.cli:main"
+
+[tool.setuptools]
+packages = ["onenote_export"]
+
